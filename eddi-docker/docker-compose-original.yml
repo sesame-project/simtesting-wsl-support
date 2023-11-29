@@ -1,0 +1,111 @@
+version: "3.4"
+
+services:
+    # Uncomment to use standalone fake server
+    # grpc_server:
+    #     build:
+    #         context: ./src/grpc/
+    #         dockerfile: Dockerfile.grpc_standalone
+    #     image: isorokos/webconserts_sesame_grpc_server:latest
+    #     command:
+    #         [
+    #             "--log_prefix",
+    #             "${TEST_RUN_ID}"
+    #         ]
+    #     volumes:
+    #         - grpc_server_logs:/app/log
+    #     ports:
+    #         - "50051:50051" # Expose gRPC server port
+
+    consert_drive_line:
+        build:
+            context: ./ # Path to the directory containing the Dockerfile for temp_container
+        image: isorokos/webconserts_sesame_drive_line:latest
+        command: [
+                "--target_consert",
+                "consert_drive_line_config_1_consert",
+                "--log_prefix",
+                "${TEST_RUN_ID}",
+                "grpc",
+                "--server-url",
+                "a.b.c.d", # localhost address of machine running Docker Compose
+                "--server-port",
+                "8090",
+            ]
+        volumes:
+            - consert_drive_line_logs:/app/log
+        # depends_on:
+        #     - grpc_server
+        network_mode: "host"
+
+    consert_drive_train:
+        build:
+            context: ./ # Path to the directory containing the Dockerfile for temp_container
+        image: isorokos/webconserts_sesame_drive_train:latest
+        command: [
+                "--target_consert",
+                "consert_drive_train_config_1_consert",
+                "--log_prefix",
+                "${TEST_RUN_ID}",
+                "grpc",
+                "--server-url",
+                "a.b.c.d", # localhost address of machine running Docker Compose
+                "--server-port",
+                "8090",
+            ]
+        volumes:
+            - consert_drive_train_logs:/app/log
+        # depends_on:
+        #     - grpc_server
+        network_mode: "host"
+
+    consert_kr22_gripper:
+        build:
+            context: ./ # Path to the directory containing the Dockerfile for temp_container
+        image: isorokos/webconserts_sesame_gripper:latest
+        command: [
+                "--target_consert",
+                "consert_gripper_config_1_consert",
+                "--log_prefix",
+                "${TEST_RUN_ID}",
+                "grpc",
+                "--server-url",
+                "a.b.c.d", # localhost address of machine running Docker Compose
+                "--server-port",
+                "8090",
+            ]
+        volumes:
+            - consert_gripper_logs:/app/log
+        # depends_on:
+        #     - grpc_server
+        network_mode: "host"
+
+    consert_robot_kr22:
+        build:
+            context: ./ # Path to the directory containing the Dockerfile for temp_container
+        image: isorokos/webconserts_sesame_robot:latest
+        command: [
+                "--target_consert",
+                "consert_robot_config_1_consert",
+                "--log_prefix",
+                "${TEST_RUN_ID}",
+                "grpc",
+                "--server-url",
+                "a.b.c.d", # localhost address of machine running Docker Compose
+                "--server-port",
+                "8090",
+            ]
+        volumes:
+            - consert_robot_logs:/app/log
+        # depends_on:
+        #     - grpc_server
+        extra_hosts:
+              - "host.docker.internal:host-gateway"
+        network_mode: "host"
+
+volumes:
+    grpc_server_logs:
+    consert_drive_line_logs:
+    consert_drive_train_logs:
+    consert_gripper_logs:
+    consert_robot_logs:
